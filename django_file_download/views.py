@@ -13,30 +13,39 @@ from django_response import response
 from TimeConvert import TimeConvert as tc
 
 
-def djfile_download(url):
-    res = requests.get(url, verify=False)
-
-    # File Ext
-    ext = res.headers.get('Content-Type', '').split('/')[-1] or 'jpeg'
-
-    # Joint File Path
-    # Base Path
-    base_path = settings.DJANGO_FILE_DOWNLOAD_BASE_PATH if hasattr(settings, 'DJANGO_FILE_DOWNLOAD_BASE_PATH') else 'file'
-    # YM Path
-    ym_path = tc.local_string(format='%Y%m') if hasattr(settings, 'DJANGO_FILE_DOWNLOAD_USE_YM') and settings.DJANGO_FILE_DOWNLOAD_USE_YM else ''
-    # File Name
-    file_name = tc.local_string(format='%Y%m%d%H%M%S') if hasattr(settings, 'DJANGO_FILE_DOWNLOAD_USE_DT') and settings.DJANGO_FILE_DOWNLOAD_USE_DT else hashlib.md5(res.content).hexdigest()
-    # File Path
-    file_path = '{0}/{1}{2}{3}.{4}'.format(base_path, ym_path, ym_path and '/', file_name, ext)
+def djfile_content_storage(content, ext='jpeg', base_path='file', file_path=None):
+    if not file_path:
+        # Joint File Path
+        # Base Path
+        base_path = settings.DJANGO_FILE_DOWNLOAD_BASE_PATH if hasattr(settings, 'DJANGO_FILE_DOWNLOAD_BASE_PATH') else base_path
+        # YM Path
+        ym_path = tc.local_string(format='%Y%m') if hasattr(settings, 'DJANGO_FILE_DOWNLOAD_USE_YM') and settings.DJANGO_FILE_DOWNLOAD_USE_YM else ''
+        # File Name
+        file_name = tc.local_string(format='%Y%m%d%H%M%S') if hasattr(settings, 'DJANGO_FILE_DOWNLOAD_USE_DT') and settings.DJANGO_FILE_DOWNLOAD_USE_DT else hashlib.md5(content).hexdigest()
+        # File Path
+        file_path = '{0}/{1}{2}{3}.{4}'.format(base_path, ym_path, ym_path and '/', file_name, ext)
 
     # File Save
     if not default_storage.exists(file_path):
-        default_storage.save(file_path, ContentFile(res.content))
+        default_storage.save(file_path, ContentFile(content))
 
     # File URL
     file_url = '{0}{1}'.format(settings.DOMAIN if hasattr(settings, 'DOMAIN') else '', default_storage.url(file_path))
 
     return file_path, file_url
+
+
+def djfile_res_storage(res, ext='jpeg', base_path='file', file_path=None):
+    # File Ext
+    ext = res.headers.get('Content-Type', '').split('/')[-1] or ext
+
+    return djfile_content_storage(res.content, ext=ext, base_path=base_path, file_path=file_path)
+
+
+def djfile_download(url):
+    res = requests.get(url, verify=False)
+
+    return djfile_res_storage(res)
 
 
 @logit
