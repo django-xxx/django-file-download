@@ -18,7 +18,7 @@ Urls.py
 ::
 
     urlpatterns = [
-        url(r'^f/', include('django_file_download.urls', namespace='filedownload')),
+        url(r'^f/', include('django_file_download.urls', namespace='django_file_download')),
     ]
 
 
