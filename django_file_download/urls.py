@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from django.conf.urls import url
+from django_six import re_path
+
 from django_file_download import views as file_views
 
 
@@ -8,5 +9,5 @@ app_name = 'django_file_download'
 
 
 urlpatterns = [
-    url(r'^download$', file_views.file_download, name='file_download'),
+    re_path(r'^download$', file_views.file_download, name='file_download'),
 ]

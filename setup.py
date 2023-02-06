@@ -11,7 +11,8 @@ setup(
     version=version,
     keywords='Django File Download',
     description='Django File Download',
-    long_description=open('README.rst').read(),
+    long_description=open('README.md').read(),
+    long_description_content_type='text/markdown',
 
     url='https://github.com/django-xxx/django-file-download',
 
@@ -20,7 +21,7 @@ setup(
 
     packages=['django_file_download'],
     py_modules=[],
-    install_requires=['TimeConvert', 'django_logit>=1.1.2', 'django-response', 'requests'],
+    install_requires=['TimeConvert', 'django_logit>=1.1.2', 'django-response', 'django-six', 'requests'],
 
     classifiers=[
         'Development Status :: 5 - Production/Stable',

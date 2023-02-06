@@ -8,17 +8,19 @@ pip install django-file-download
 
 ## Urls.py
 ```python
+from django.urls import include, re_path
+
 urlpatterns = [
-    url(r'^f/', include('django_file_download.urls', namespace='django_file_download')),
+    re_path(r'^f/', include('django_file_download.urls', namespace='django_file_download')),
 ]
 ```
 or
 ```python
-from django.conf.urls import include, url
+from django.urls import re_path
 from django_file_download import views as file_views
 
 urlpatterns = [
-    url(r'^download$', file_views.file_download, name='file_download'),
+    re_path(r'^download$', file_views.file_download, name='file_download'),
 ]
 ```
 
